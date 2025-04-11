@@ -1,7 +1,11 @@
-<textarea id="chat-box"></textarea>
-<button onclick="send()">Send</button>
+<body style="background-color: slategray;">
+<textarea id="chat-box" style="left: auto !important; margin-left: 70px !important; margin-top: 70px !important; width: 306px !important; height: 106px !important; background-color: palegoldenrod;"></textarea>
+<br>
+<br>
+<button onclick="send()" style="margin-left: 250px !important;">Send</button>
 <button onclick="get()">Refresh</button>
 
+  
 <script>
 function send() {
   fetch('/.netlify/functions/msg', {
@@ -17,3 +21,4 @@ function get() {
     .then(d => document.getElementById('chat-box').value = d.message || '');
 }
 </script>
+</body>
