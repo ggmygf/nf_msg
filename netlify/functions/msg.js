@@ -52,4 +52,5 @@ exports.handler = async function (event) {
   } finally {
     await client.end(); // avoid reuse issues
   }
+  console.log('Event:', event);
 };
