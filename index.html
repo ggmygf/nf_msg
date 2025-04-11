@@ -1,0 +1,19 @@
+<textarea id="chat-box"></textarea>
+<button onclick="send()">Send</button>
+<button onclick="get()">Refresh</button>
+
+<script>
+function send() {
+  fetch('/.netlify/functions/msg', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: document.getElementById('chat-box').value })
+  });
+}
+
+function get() {
+  fetch('/.netlify/functions/msg')
+    .then(r => r.json())
+    .then(d => document.getElementById('chat-box').value = d.message || '');
+}
+</script>
