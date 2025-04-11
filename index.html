@@ -10,8 +10,8 @@
 function send() {
   fetch('/.netlify/functions/msg', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: document.getElementById('chat-box').value })
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: "message=" + encodeURIComponent(msg)
   });
 }
 
