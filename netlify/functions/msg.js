@@ -1,44 +1,55 @@
 // netlify/functions/msg.js
-const { Client } = require('pg');
+const { Client } = require("pg");
 
-exports.handler = async function(event) {
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-  });
+exports.handler = async function (event) {
+  const dbUrl = process.env.DATABASE_URL;
+  if (!dbUrl) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Missing DATABASE_URL env variable" }),
+    };
+  }
+
+  const client = new Client({ connectionString: dbUrl, ssl: { rejectUnauthorized: false } });
 
   try {
-    await client.connect(); // Only connect inside the handler
+    await client.connect();
 
-    if (event.httpMethod === 'POST') {
-      const { message } = JSON.parse(event.body);
-      await client.query(`
-        INSERT INTO messages (id, message)
-        VALUES (1, $1)
-        ON CONFLICT (id) DO UPDATE SET message = EXCLUDED.message
-      `, [message]);
+    if (event.httpMethod === "POST") {
+      const body = new URLSearchParams(event.body);
+      const msg = body.get("message")?.trim();
+
+      if (!msg) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ error: "Empty message" }),
+        };
+      }
+
+      await client.query("INSERT INTO messages (id, message) VALUES (1, $1) ON CONFLICT (id) DO UPDATE SET message = $1", [msg]);
 
       return {
         statusCode: 200,
-        body: 'OK'
+        body: JSON.stringify({ success: true }),
       };
     }
 
-    // GET message
-    const res = await client.query('SELECT message FROM messages WHERE id = 1');
+    // GET - fetch latest message
+    const result = await client.query("SELECT message FROM messages WHERE id = 1");
+    const message = result.rows[0]?.message || "";
+
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: res.rows[0]?.message || '' }),
-      headers: { 'Content-Type': 'application/json' }
+      body: JSON.stringify({ message }),
     };
 
   } catch (err) {
-    console.error('Function Error:', err);
+    console.error("DB error:", err);
     return {
       statusCode: 500,
-      body: 'Server error'
+      body: JSON.stringify({ error: "Server error" }),
     };
   } finally {
-    await client.end(); // Always close the connection
+    await client.end(); // avoid reuse issues
   }
 };
