@@ -1,26 +1,68 @@
+<head>
+  <style>
+            html, body {
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+            }
+    
+            #toast {
+    position: fixed; /* Stay in place */
+    top: 20px; /* Adjust vertical position */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust centering */
+    background-color: rgba(0, 0, 0, 0.8); /* Black with opacity */
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.5s ease-in-out; /* Smooth fade effect */
+    z-index: 1000; /* Ensure it's on top */
+  }
+          #toast.show {
+    opacity: 1; /* Show the toast */
+  }
+  </style>
+</head>
+
+
 <body style="background-color: slategray;">
 <textarea id="chat-box" style="left: auto !important; margin-left: 70px !important; margin-top: 70px !important; width: 306px !important; height: 106px !important; background-color: palegoldenrod;"></textarea>
 <br>
 <br>
 <button onclick="send()" style="margin-left: 250px !important;">Send</button>
 <button onclick="get()">Refresh</button>
-
+<div id="toast"></div>
   
 <script>
 function send() {
   let msg = document.getElementById("chat-box").value.trim();  // Corrected here
   if (msg === "") return; // Don't send empty message
+  showToast('processing...');
   fetch('/.netlify/functions/msg', {
     method: 'POST',
     headers: {"Content-Type": "application/x-www-form-urlencoded"},
     body: "message=" + encodeURIComponent(msg)
-  });
+  }).then(() => {showToast('good!');});
 }
 
 function get() {
+  showToast('processing...');
   fetch('/.netlify/functions/msg')
     .then(r => r.json())
-    .then(d => document.getElementById('chat-box').value = d.message || '');
+    .then(d => document.getElementById('chat-box').value = d.message || '')
+    .then(() => {showToast('good!');});
 }
+
+        function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => {toast.classList.remove("show");}, 1000); // Hide after 1 second (1000 milliseconds)
+    }  
+  
 </script>
 </body>
