@@ -1,15 +1,6 @@
 <head>
   <style>
-            html, body {
-            background-color: #333;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 80vh;
-            }
-    
-            #toast {
+                #toast {
     position: fixed; /* Stay in place */
     top: 20px; /* Adjust vertical position */
     left: 50%; /* Center horizontally */
@@ -21,20 +12,43 @@
     opacity: 0; /* Initially hidden */
     transition: opacity 0.5s ease-in-out; /* Smooth fade effect */
     z-index: 1000; /* Ensure it's on top */
-  }
-          #toast.show {
-    opacity: 1; /* Show the toast */
-  }
+  } #toast.show {opacity: 1;}
+    
+            html, body {
+            background-color: #333;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+            }
+    
+            .buttin {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            display: flex;
+            gap: 5px;
+            }
+    
+
   </style>
 </head>
 
 
+// ******   ******    ******   ******     
+
+
 <body style="background-color: slategray;">
-<textarea id="chat-box" style="left: auto !important; margin-left: 70px !important; margin-top: 70px !important; width: 306px !important; height: 106px !important; background-color: palegoldenrod;"></textarea>
-<br>
-<br>
+
+  <div style="position: relative;">
+<textarea id="chat-box" style="width: 356px !important; height: 156px !important; background-color: palegoldenrod;"></textarea><br>
+    <div class="buttin">
 <button onclick="send()" style="margin-left: 250px !important;">Send</button>
 <button onclick="get()">Refresh</button>
+    </div>
+  </div>
+
 <div id="toast"></div>
   
 <script>
