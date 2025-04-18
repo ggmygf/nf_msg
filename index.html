@@ -8,6 +8,8 @@
   
 <script>
 function send() {
+  let msg = document.getElementById("chat-box").value.trim();  // Corrected here
+  if (msg === "") return; // Don't send empty message
   fetch('/.netlify/functions/msg', {
     method: 'POST',
     headers: {"Content-Type": "application/x-www-form-urlencoded"},
